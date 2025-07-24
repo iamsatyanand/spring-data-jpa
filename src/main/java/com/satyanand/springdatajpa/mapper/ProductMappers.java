@@ -5,6 +5,8 @@ import com.satyanand.springdatajpa.dto.ProductResponseDTO;
 import com.satyanand.springdatajpa.entity.Product;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProductMappers {
 
@@ -25,5 +27,11 @@ public class ProductMappers {
                 .description(product.getDescription())
                 .productType(product.getProductType())
                 .build();
+    }
+
+    public static List<ProductResponseDTO> toProductResponseDTOList(List<Product> products) {
+        return products.stream()
+                .map(ProductMappers::toResponseDTO)
+                .toList();
     }
 }
