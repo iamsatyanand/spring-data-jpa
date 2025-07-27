@@ -4,9 +4,12 @@ import com.satyanand.springdatajpa.dto.ProductRequestDTO;
 import com.satyanand.springdatajpa.dto.ProductResponseDTO;
 import com.satyanand.springdatajpa.entity.Product;
 import com.satyanand.springdatajpa.service.IProductService;
+
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
@@ -26,6 +29,26 @@ public class ProductController {
     @GetMapping()
     public List<ProductResponseDTO> getAllproducts(){
         return productService.findAll();
+    }
+
+    @GetMapping("/sortedByPrice")
+    public List<ProductResponseDTO> findAllSortedByPrice(){
+        return productService.findAllSortedByPrice();
+    }
+
+    @GetMapping("/sort/{sortBy}")
+    public List<ProductResponseDTO> findAllProducts(@PathVariable String sortBy ){
+        return productService.findAllProducts(sortBy);
+    }
+
+    @GetMapping("/sortDesc/{sortBy}")
+    public List<ProductResponseDTO> findAllProductsSortedByDesc(@PathVariable String sortBy ){
+        return productService.findAllProductsSortedByDesc(sortBy);
+    }
+
+    @GetMapping("/pagination")
+    public Page<ProductResponseDTO> findAllProductsSortedByDesc(@RequestParam(defaultValue = "1") int pageNumber ){
+        return productService.findAllWithPagination(pageNumber);
     }
 
     @GetMapping("/{id}")

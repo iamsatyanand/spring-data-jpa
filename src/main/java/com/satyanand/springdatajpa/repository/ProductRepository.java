@@ -1,6 +1,9 @@
 package com.satyanand.springdatajpa.repository;
 
 import com.satyanand.springdatajpa.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -29,4 +32,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT * FROM PRODUCT WHERE PRICE = ?1", nativeQuery = true)
     List<Product> getProductByPriceViaSQL(double price);
+
+    // SORTING
+
+    List<Product> findAllByOrderByPrice();
+    List<Product> findAllByOrderByPriceAsc();
+    List<Product> findAllByOrderByPriceDesc();
+
+    // RETURNS ALL THE PRODUCTS
+    List<Product> findBy(Sort sort);
+
+    Page<Product> findByDescriptionIgnoreCaseContaining(String description, Pageable pageable);
+
 }

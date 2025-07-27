@@ -5,13 +5,20 @@ import com.satyanand.springdatajpa.dto.ProductResponseDTO;
 import com.satyanand.springdatajpa.entity.Product;
 import com.satyanand.springdatajpa.mapper.ProductMappers;
 import com.satyanand.springdatajpa.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductService implements IProductService{
+
+    private final int PAGE_SIZE = 1;
 
     private final ProductRepository productRepository;
 
@@ -25,6 +32,36 @@ public class ProductService implements IProductService{
     public List<ProductResponseDTO> findAll() {
         return ProductMappers.toProductResponseDTOList(productRepository.findAll());
     }
+
+    @Override
+    public List<ProductResponseDTO> findAllSortedByPrice() {
+        return ProductMappers.toProductResponseDTOList(productRepository.findAllByOrderByPrice());
+    }
+
+    @Override
+    public List<ProductResponseDTO> findAllProducts(String sortBy) {
+        return ProductMappers.toProductResponseDTOList(productRepository.findBy(Sort.by(sortBy)));
+    }
+
+    @Override
+    public List<ProductResponseDTO> findAllProductsSortedByDesc(String sortBy) {
+        return ProductMappers.toProductResponseDTOList(productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy)));
+    }
+
+    @Override
+    public Page<ProductResponseDTO> findAllWithPagination( int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        Page<Product> productPage = productRepository.findAll(pageable);
+        return productPage.map(ProductMappers::toResponseDTO);
+    }
+
+    @Override
+    public Page<ProductResponseDTO> findProductLikeDescription(String description, int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        Page<Product> productPage = productRepository.findByDescriptionIgnoreCaseContaining(description, pageable);
+        return productPage.map(ProductMappers::toResponseDTO);
+    }
+
 
     @Override
     public Product getProductById(Long id) {
